@@ -2,21 +2,29 @@ pragma solidity >=0.5.0 <0.6.0;
 
 contract ZombieFactory {
 
-    // declare our event here
+    event NewZombie(uint zombieId, string name, uint dna);
+
+    // each zombie has a particular dna, we restrict this to 32 hexadecimals 
 
     uint dnaDigits = 16;
     uint dnaModulus = 10 ** dnaDigits;
+
+   // we define the data types that are used by the zombies 
 
     struct Zombie {
         string name;
         uint dna;
     }
 
+  //we initializa an empty array list, upon which we contously add new zombies or remove from the list
+
     Zombie[] public zombies;
+    
+//this function is private to the class and is used to create new zombies with the defined params and add them to the array
 
     function _createZombie(string memory _name, uint _dna) private {
-        zombies.push(Zombie(_name, _dna));
-        // and fire it here
+        uint id = zombies.push(Zombie(_name, _dna)) - 1;
+        emit NewZombie(id, _name, _dna);
     }
 
     function _generateRandomDna(string memory _str) private view returns (uint) {
@@ -24,22 +32,11 @@ contract ZombieFactory {
         return rand % dnaModulus;
     }
 
+// this function creates a random zombie ,ny taking its name and randdom DNA
+
     function createRandomZombie(string memory _name) public {
         uint randDna = _generateRandomDna(_name);
         _createZombie(_name, randDna);
-    }
-
-    //As simple way to listen to the events 
-
-    event addIntegers(uint _x, uint _y, result);
-
-    function add(_x, _y, result) public returns (uint){
-       uint result =  _x + _y;
-
-       emit addIntegers(_x, _y, result)
-
-       return result 
-        
     }
 
 }
